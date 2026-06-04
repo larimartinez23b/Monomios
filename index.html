@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asesora IA - Aprendiendo Monomios</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        /* Fondo rediseñado: Tonos ciruela, cereza y rosa oscuro */
+        body { 
+            display: flex; 
+            height: 100vh; 
+            background: linear-gradient(135deg, #2c071b 0%, #5c193e 50%, #8e2456 100%);
+            color: #ffffff; 
+        }
+        
+        /* Contenedor Izquierdo: La Actividad */
+        .actividad { 
+            width: 50%; 
+            padding: 40px; 
+            border-right: 2px solid rgba(255, 255, 255, 0.1); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            background: rgba(0, 0, 0, 0.2); 
+            backdrop-filter: blur(10px);
+        }
+        
+        .badge { 
+            background: linear-gradient(90deg, #ff758c, #ff7eb3); 
+            color: white; 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            font-size: 13px; 
+            width: fit-content; 
+            margin-bottom: 15px; 
+            box-shadow: 0 4px 15px rgba(255, 117, 140, 0.4);
+        }
+        
+        h1 { font-size: 32px; margin-bottom: 20px; color: #ffb3c6; text-shadow: 0 2px 10px rgba(255, 179, 198, 0.5); }
+        
+        .teoria { background-color: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px; line-height: 1.6; border: 1px solid rgba(255,255,255,0.2); }
+        .teoria strong { color: #ffe6eb; }
+
+        .ejemplos-box { background-color: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 12px; border-left: 5px solid #ff7eb3; }
+        .ejemplos-box ul { margin-left: 20px; margin-top: 10px; }
+        .ejemplos-box li { margin-bottom: 8px; font-size: 17px; }
+
+        /* Contenedor Derecho: El Chat de IA */
+        .chat-container { width: 50%; display: flex; flex-direction: column; background-color: rgba(20, 10, 15, 0.85); backdrop-filter: blur(8px); }
+        .chat-header { padding: 20px; background: linear-gradient(90deg, #3a1028, #240a18); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 15px; }
+        
+        .ia-avatar { 
+            width: 45px; height: 45px; 
+            background: linear-gradient(135deg, #ff758c, #ff7eb3); 
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; color: white; 
+            box-shadow: 0 0 15px rgba(255, 117, 140, 0.6);
+        }
+
+        .chat-messages { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        
+        /* Burbujas de chat rediseñadas */
+        .msg { max-width: 85%; padding: 16px 20px; border-radius: 18px; line-height: 1.5; font-size: 15px; animation: fadeIn 0.3s ease-in-out;}
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .msg.ia { 
+            background: linear-gradient(135deg, #401b31, #5c2748); 
+            align-self: flex-start; 
+            border-bottom-left-radius: 2px; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .msg.usuario { 
+            background: linear-gradient(135deg, #ff758c, #ff7eb3); 
+            color: white; 
+            align-self: flex-end; 
+            border-bottom-right-radius: 2px; 
+            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.3);
+        }
+
+        /* Botones de acción rápida */
+        .quick-actions { padding: 15px 20px; display: flex; gap: 10px; flex-wrap: wrap; background-color: rgba(0,0,0,0.2); }
+        .btn-action { 
+            background-color: rgba(255, 255, 255, 0.1); 
+            color: #fff; border: 1px solid rgba(255,255,255,0.3); 
+            padding: 10px 18px; border-radius: 25px; 
+            cursor: pointer; transition: all 0.3s; font-size: 13px; 
+        }
+        .btn-action:hover { background-color: #ffb3c6; color: #000; border-color: #ffb3c6; box-shadow: 0 0 10px rgba(255,179,198,0.5); transform: translateY(-2px);}
+
+        /* Input de texto */
+        .chat-input-area { padding: 20px; background-color: rgba(0,0,0,0.4); display: flex; gap: 12px; }
+        input[type="text"] { 
+            flex: 1; padding: 15px; 
+            background-color: rgba(255,255,255,0.1); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            border-radius: 12px; color: white; outline: none; font-size: 15px; transition: 0.3s;
+        }
+        input[type="text"]:focus { border-color: #ffb3c6; background-color: rgba(255,255,255,0.15); }
+        
+        button.send-btn { 
+            background: linear-gradient(90deg, #ff758c, #ff7eb3); 
+            color: white; border: none; padding: 0 25px; border-radius: 12px; 
+            font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(255, 117, 140, 0.3);
+        }
+        button.send-btn:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; height: auto; }
+            .actividad, .chat-container { width: 100%; border-right: none; }
+            .chat-container { height: 70vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="actividad">
+        <span class="badge">ACTIVIDAD 1</span>
+        <h1>El Mundo de los Monomios</h1>
+        
+        <div class="teoria">
+            <p>Un <strong>monomio</strong> es la expresión algebraica más simple. Está formado por un solo término donde los números y las letras se están multiplicando entre sí. <br><br>Se compone de un número llamado <strong>coeficiente</strong> y letras con exponentes llamadas <strong>parte literal</strong>.</p>
+        </div>
+
+        <div class="ejemplos-box">
+            <strong style="color: #ffb3c6;">Nuevos ejemplos para analizar:</strong>
+            <ul>
+                <li><strong>Ejemplo A:</strong> \( 7y^5 \)</li>
+                <li><strong>Ejemplo B:</strong> \( -4m^3n \)</li>
+                <li><strong>Ejemplo C:</strong> \( \frac{1}{2}z^2 \)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="ia-avatar">IA</div>
+            <div>
+                <strong style="font-size: 18px; color: #ffb3c6;">Asesora Matemática IA</strong>
+                <p style="font-size: 13px; color: #e0e0e0;">Hazme CUALQUIER pregunta sobre álgebra.</p>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="msg ia">
+                ¡Hola! Soy tu asesora de IA. 🌸✨<br><br>Estoy aquí para ayudarte a dominar el álgebra. Puedes tocar los botones de abajo para analizar los nuevos ejemplos o <strong>escribir directamente preguntas como:</strong><br>
+                • "¿Cómo se dividen los monomios?"<br>
+                • "¿Qué pasa si multiplico signos negativos?"<br>
+                • "¿Qué es un polinomio?"
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <button class="btn-action" onclick="responderEjemplo(1)">Analizar \( 7y^5 \)</button>
+            <button class="btn-action" onclick="responderEjemplo(2)">Analizar \( -4m^3n \)</button>
+            <button class="btn-action" onclick="responderEjemplo(3)">Analizar \( \frac{1}{2}z^2 \)</button>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Escribe cualquier duda matemática aquí..." onkeypress="detectarEnter(event)">
+            <button class="send-btn" onclick="enviarMensajeManual()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+
+        function renderizarMatematicas() {
+            renderMathInElement(chatMessages, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        }
+
+        function agregarMensaje(texto, emisor) {
+            const div = document.createElement('div');
+            div.classList.add('msg', emisor);
+            div.innerHTML = texto;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            renderizarMatematicas();
+        }
+
+        function responderEjemplo(numero) {
+            // Lógica actualizada para los nuevos ejemplos
+            if(numero === 1) {
+                agregarMensaje("Analiza el Ejemplo A: \\( 7y^5 \\)", "usuario");
+                setTimeout(() => { agregarMensaje("¡Con gusto! En el monomio \\( 7y^5 \\):<br>• <strong>Coeficiente:</strong> \\( 7 \\).<br>• <strong>Parte literal:</strong> \\( y \\).<br>• <strong>Grado:</strong> \\( 5 \\).", "ia"); }, 600);
+            } 
+            else if(numero === 2) {
+                agregarMensaje("Analiza el Ejemplo B: \\( -4m^3n \\)", "usuario");
+                setTimeout(() => { agregarMensaje("Para el caso de \\( -4m^3n \\):<br>• <strong>Coeficiente:</strong> \\( -4 \\).<br>• <strong>Parte literal:</strong> \\( m^3 \\) y \\( n \\).<br>• <strong>Grado absoluto:</strong> Sumamos los exponentes de ambas letras \\( 3 + 1 = 4 \\).", "ia"); }, 600);
+            } 
+            else if(numero === 3) {
+                agregarMensaje("Analiza el Ejemplo C: \\( \\frac{1}{2}z^2 \\)", "usuario");
+                setTimeout(() => { agregarMensaje("Excelente elección. En \\( \\frac{1}{2}z^2 \\):<br>• <strong>Coeficiente:</strong> \\( \\frac{1}{2} \\) (¡los coeficientes también pueden ser fracciones!).<br>• <strong>Parte literal:</strong> \\( z \\).<br>• <strong>Grado:</strong> \\( 2 \\).", "ia"); }, 600);
+            }
+        }
+
+        // CEREBRO DE LA IA AMPLIADO
+        function procesarPregunta(pregunta) {
+            let p = pregunta.toLowerCase();
+            
+            if (p.includes("dividi") || p.includes("división")) {
+                return "Para dividir monomios, divides los números grandes (coeficientes) y **RESTAS** los exponentes de las letras iguales.<br><br>Ejemplo: $$ \\frac{10x^5}{2x^2} = 5x^3 $$";
+            } 
+            else if (p.includes("multiplica") || p.includes("multiplicar")) {
+                return "Para multiplicar monomios, multiplicas los coeficientes y **SUMAS** los exponentes de las letras iguales.<br><br>Ejemplo: \\( (3x^2)(4x^3) = 12x^5 \\).";
+            } 
+            else if (p.includes("suma") || p.includes("resta")) {
+                return "Solo puedes sumar o restar monomios si son **semejantes** (misma letra y mismo exponente). Solo operas los números y dejas la letra igual.<br><br>Ejemplo: \\( 4x^2 + 3x^2 = 7x^2 \\).";
+            } 
+            else if (p.includes("polinomio") || p.includes("binomio") || p.includes("trinomio")) {
+                return "Un **monomio** es un solo término. Si unes varios monomios con sumas o restas, se convierte en un **polinomio**.<br>• 2 términos = Binomio (ej. \\( x + y \\))<br>• 3 términos = Trinomio (ej. \\( x^2 + 2x + 1 \\))";
+            }
+            else if (p.includes("signo") || p.includes("menos") || p.includes("negativo")) {
+                return "¡No olvides la ley de los signos al multiplicar o dividir!<br>• (+) por (+) = +<br>• (-) por (-) = +<br>• (+) por (-) = -<br>• (-) por (+) = -";
+            }
+            else if (p.includes("grado") || p.includes("exponente")) {
+                return "El **grado** te lo da el exponente (el número chiquito arriba). Si hay varias letras, sumas todos sus exponentes para sacar el grado absoluto del monomio.";
+            }
+            else if (p.includes("parte") || p.includes("compone") || p.includes("que es")) {
+                return "Todo monomio tiene:<br>1. <strong>Signo</strong> (+ o -)<br>2. <strong>Coeficiente</strong> (el número base)<br>3. <strong>Variables</strong> (las letras)<br>4. <strong>Exponentes</strong> (los números chiquitos)";
+            }
+            else if (p.includes("hola") || p.includes("saludos") || p.includes("buenos")) {
+                return "¡Hola! Estoy lista para resolver cualquier misterio matemático. ¿Qué duda de álgebra tienes hoy?";
+            }
+            else if (p.includes("gracias") || p.includes("genial") || p.includes("entendi")) {
+                return "¡De nada! Me alegra mucho poder ayudarte. Si tienes otra duda, aquí sigo.";
+            }
+            else {
+                return "Esa es una pregunta muy interesante. En esta sesión estoy programada principalmente para operaciones con expresiones algebraicas (monomios, polinomios, exponentes, signos). ¿Podrías reformular tu duda usando palabras como <em>sumar, dividir, signos o polinomio</em>?";
+            }
+        }
+
+        function enviarMensajeManual() {
+            const input = document.getElementById('userInput');
+            const texto = input.value.trim();
+            
+            if(texto !== "") {
+                agregarMensaje(texto, "usuario");
+                input.value = "";
+                
+                setTimeout(() => {
+                    const respuestaIA = procesarPregunta(texto);
+                    agregarMensaje(respuestaIA, "ia");
+                }, 700);
+            }
+        }
+
+        function detectarEnter(event) {
+            if (event.key === "Enter") {
+                enviarMensajeManual();
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderizarMatematicas();
+        });
+    </script>
+</body>
+</html>
